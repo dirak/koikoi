@@ -13,9 +13,18 @@ const server = http.createServer(app)//create the server, this will help us hand
 
 const io = socketio(server)//communication with the client
 
+let players = [];
+
 io.on('connection', (socket) => {
 	console.log("Received connection")
-	socket.emit('message', '[SERVER]:You have been connected')
+
+	if(players.length == 0) {
+		players.push(socket)
+		socket.emit("message", "Waiting for another player ...")
+	} else if(players.length == 1) {
+		players.push(socket)
+		players.map((socket) => socket.emit("message", "Two players connected. Game starting"))	
+	}
 
 	socket.on('message', (text) => {
 		socket.broadcast.emit('message', text)//send to everyone BUT the original client
