@@ -1,0 +1,19 @@
+{
+  "name": "koikoi",
+  "version": "1.0.0",
+  "description": "hanafuda cardgame, koi-koi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dirak/koikoi.git"
+  },
+  "author": "Brooke",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dirak/koikoi/issues"
+  },
+  "homepage": "https://github.com/dirak/koikoi#readme"
+}
