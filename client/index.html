@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>Koi</head>
 	<body>
+		<button onclick="writeEvent('knock knock')">send opponent a Knock</button>
 		<div class="hand" id="opp_hand">
 
 		</div>
@@ -14,5 +15,11 @@
 		<div class="pile" id="point_pile">
 
 		</div>
+		<ul id="debug_events">
+
+		</ul>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="src/client.js"></script>
 	</body>
+
 </html>

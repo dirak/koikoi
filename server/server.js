@@ -14,7 +14,8 @@ const server = http.createServer(app)//create the server, this will help us hand
 const io = socketio(server)//communication with the client
 
 io.on('connection', (socket) => {
-	socket.emit('message', 'Data being sent')
+	console.log("Received connection")
+	socket.emit('message', '[SERVER]:You have been connected')
 })
 
 server.on('error', (err) => {
