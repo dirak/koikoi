@@ -1,6 +1,7 @@
 const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
+const koi = require('./koi')
 
 const port = 8888
 const clientpath = `${__dirname}/../client`
@@ -24,6 +25,7 @@ io.on('connection', (socket) => {
 	} else if(players.length == 1) {
 		players.push(socket)
 		players.map((socket) => socket.emit("message", "Two players connected. Game starting"))	
+		let new_game = koi()
 	}
 
 	socket.on('message', (text) => {

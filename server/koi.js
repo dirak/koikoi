@@ -15,7 +15,7 @@ module.exports = (players) => {
 		//months are jan->dec, points are 20, 10, 5, 1.
 		//using this for ref: http://hanafuda.richmind.net/hanafuda-cards
 
-		{
+		Object.entries({
 			'January': [20, 5, 1, 1],
 			'February': [10, 5, 1, 1],
 			'March': [20, 5, 1, 1],
@@ -28,7 +28,7 @@ module.exports = (players) => {
 			'October': [10, 5, 1, 1],
 			'November': [20, 10, 5, 1],
 			'December': [20, 1, 1, 1]
-		}.entries(months).reduce((deck, [month, cards]) => {
+		}).reduce((deck, [month, cards]) => {
 			return deck.concat(
 				cards.map((card) => {
 					return month+":"+card
@@ -57,6 +57,11 @@ module.exports = (players) => {
 		//since it is months, we can check the first 3 letters for matching
 		//can't use 2, because ju/ly, ju/ne.
 		return a.slice(0,3) == b.slice(0,3)
+	}
+
+	game.makeMatch = (player, card_a, card_b) => {
+		//this will take the cards and add them to the players discard pile,
+		//and fill the board up appropriately
 	}
 
 	return game
