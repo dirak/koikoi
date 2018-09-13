@@ -47,7 +47,16 @@ module.exports = (players) => {
 	
 	game.deal = () => {
 		//deal cards out
-		console.log(shuffle(game.state.deck))
+		game.state.deck = shuffle(game.state.deck)
+		console.log(game.state.deck)
+		for(let j = 0; j < 2; j++){
+			let temp = []
+			for(let i = 0; i < 8; i++) temp.push(game.state.deck.pop())
+			game.state.hands.push(temp)
+		}
+		console.log(game.state.deck)
+		console.log(game.state.hands[0])
+		console.log(game.state.hands[1])
 	}
 
 	game.checkMatch = (a, b) => {
