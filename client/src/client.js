@@ -6,10 +6,14 @@ const writeEvent = (text) => {
 	parent.appendChild(el)
 }
 
+const writeHand = (hand) => {
+	console.log(hand)
+}
 writeEvent("Listening to Server")
 
 const socket = io()
 socket.on('message', writeEvent)
+socket.on('hand', writeHand)
 
 document.querySelector("#knock_button").addEventListener('click',() => {
 	socket.emit('message', 'knock-knock')

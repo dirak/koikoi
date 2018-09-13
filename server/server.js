@@ -14,7 +14,9 @@ const server = http.createServer(app)//create the server, this will help us hand
 
 const io = socketio(server)//communication with the client
 
-let players = [];
+//in the future we want to split these up into rooms so we can have multiple games going
+let players = []
+let new_game = null
 
 io.on('connection', (socket) => {
 	console.log("Received connection")
@@ -25,8 +27,7 @@ io.on('connection', (socket) => {
 	} else if(players.length == 1) {
 		players.push(socket)
 		players.map((socket) => socket.emit("message", "Two players connected. Game starting"))	
-		let new_game = koi(players)
-		new_game.deal()
+		startNewGame()
 	}
 
 	socket.on('message', (text) => {
@@ -41,3 +42,10 @@ server.on('error', (err) => {
 server.listen(port, () => {
 	console.log("Server listening on port:", port)
 })
+
+let startNewGame = () => {
+	new_game = koi(players)
+	new_game.deal()
+	players[0].emit("hand", JSON.stringify(new_game.state.hands[0]))
+	players[1].emit("hand", JSON.stringify(new_game.state.hands[1]))
+}

@@ -48,7 +48,6 @@ module.exports = (players) => {
 	game.deal = () => {
 		//deal cards out
 		game.state.deck = shuffle(game.state.deck)
-		console.log(game.state.deck)
 		for(let player of players) {
 			console.log("[SERVER] Dealing to player")
 			let temp = []
@@ -57,10 +56,6 @@ module.exports = (players) => {
 		}
 		console.log("[SERVER] Dealing to table")
 		for(let i = 0; i < CARDS_IN_DECK; i++) game.state.table.push(game.state.deck.pop())
-		console.log(game.state.deck)
-		console.log(game.state.hands[0])
-		console.log(game.state.hands[1])
-		console.log(game.state.table)
 	}
 
 	game.checkMatch = (a, b) => {
@@ -89,9 +84,9 @@ const CARDS_IN_DECK = 8
 let shuffle = (deckToShuffle) => {
 	for(let i = deckToShuffle.length - 1; i > 0; i--){
 		let j = Math.floor(Math.random() * (i+1))
-		let temp = deckToShuffle[i];
-		deckToShuffle[i] = deckToShuffle[j];
-		deckToShuffle[j] = temp;
+		let temp = deckToShuffle[i]
+		deckToShuffle[i] = deckToShuffle[j]
+		deckToShuffle[j] = temp
 	}
 	return deckToShuffle
 }
