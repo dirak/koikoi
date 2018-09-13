@@ -15,5 +15,13 @@
   "bugs": {
     "url": "https://github.com/dirak/koikoi/issues"
   },
-  "homepage": "https://github.com/dirak/koikoi#readme"
+  "homepage": "https://github.com/dirak/koikoi#readme",
+  "keywords": [],
+  "dependencies": {
+    "express": "^4.16.3",
+    "socket.io": "^2.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  }
 }
