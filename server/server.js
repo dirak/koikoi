@@ -19,7 +19,7 @@ let players = []
 let new_game = null
 
 io.on('connection', (socket) => {
-	console.log("Received connection")
+	console.log("Received connection") 
 
 	if(players.length == 0) {
 		players.push(socket)
@@ -47,7 +47,16 @@ let startNewGame = () => {
 	new_game = koi(players)
 	new_game.deal()
 	for(let [i, player] of players.entries()) {
+		//the opponent will always be the value that we aren't
+		//so if we are 1, then they are 0.
+		//if we are 0, they are 1
+		//the shorthand for this is i+1 mod 2:
+		//i = 0, 1 mod 2 = 1
+		//i = 1, 2 mod 2 = 0
+		let opponent = (i+1)%2
 		player.emit("hand", JSON.stringify(new_game.state.hands[i]))
+		//we want them to know the opponents hand size but that is all
+		player.emit("opp_hand", new_game.state.hands[opponent].length)
 		player.emit("table", JSON.stringify(new_game.state.table))
 	}
 }
