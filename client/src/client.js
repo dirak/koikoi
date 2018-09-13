@@ -10,3 +10,7 @@ writeEvent("Listening to Server")
 
 const socket = io()
 socket.on('message', writeEvent)
+
+document.querySelector("#knock_button").addEventListener('click',() => {
+	socket.emit('message', 'knock-knock')
+})

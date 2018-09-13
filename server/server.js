@@ -16,6 +16,10 @@ const io = socketio(server)//communication with the client
 io.on('connection', (socket) => {
 	console.log("Received connection")
 	socket.emit('message', '[SERVER]:You have been connected')
+
+	socket.on('message', (text) => {
+		socket.broadcast.emit('message', text)//send to everyone BUT the original client
+	})
 })
 
 server.on('error', (err) => {
