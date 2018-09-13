@@ -50,7 +50,7 @@ module.exports = (players) => {
 		game.state.deck = shuffle(game.state.deck)
 		console.log(game.state.deck)
 		for(let player of players) {
-			console.log("[SERVER] Dealing to ", player)
+			console.log("[SERVER] Dealing to player")
 			let temp = []
 			for(let i = 0; i < 8; i++) temp.push(game.state.deck.pop())
 			game.state.hands.push(temp)
