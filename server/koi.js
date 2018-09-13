@@ -52,12 +52,15 @@ module.exports = (players) => {
 		for(let player of players) {
 			console.log("[SERVER] Dealing to player")
 			let temp = []
-			for(let i = 0; i < 8; i++) temp.push(game.state.deck.pop())
+			for(let i = 0; i < CARDS_IN_DECK; i++) temp.push(game.state.deck.pop())
 			game.state.hands.push(temp)
 		}
+		console.log("[SERVER] Dealing to table")
+		for(let i = 0; i < CARDS_IN_DECK; i++) game.state.table.push(game.state.deck.pop())
 		console.log(game.state.deck)
 		console.log(game.state.hands[0])
 		console.log(game.state.hands[1])
+		console.log(game.state.table)
 	}
 
 	game.checkMatch = (a, b) => {
@@ -75,6 +78,8 @@ module.exports = (players) => {
 
 	return game
 }
+
+const CARDS_IN_DECK = 8
 
 /*
 	Implementation of the Fisher-Yates-Shuffle
