@@ -14,18 +14,18 @@ module.exports = (players) => {
 		//using this for ref: http://hanafuda.richmind.net/hanafuda-cards
 
 		Object.entries({
-			'January': [20, 5, 1, 1],
-			'February': [10, 5, 1, 1],
-			'March': [20, 5, 1, 1],
-			'April': [10, 5, 1, 1],
-			'May': [10, 5, 1, 1],
-			'June': [10, 5, 1, 1],
-			'July': [10, 5, 1, 1],
-			'August': [20, 10, 1, 1],
-			'September': [10, 5, 1, 1],
-			'October': [10, 5, 1, 1],
-			'November': [20, 10, 5, 1],
-			'December': [20, 1, 1, 1]
+			'January': [20, 5, "1_1", "1_2"],
+			'February': [10, 5, "1_1", "1_2"],
+			'March': [20, 5, "1_1", "1_2"],
+			'April': [10, 5, "1_1", "1_2"],
+			'May': [10, 5, "1_1", "1_2"],
+			'June': [10, 5,"1_1", "1_2"],
+			'July': [10, 5, "1_1", "1_2"],
+			'August': [20, 10, "1_1", "1_2"],
+			'September': [10, 5, "1_1", "1_2"],
+			'October': [10, 5, "1_1", "1_2"],
+			'November': [20, 10, 5, "1_1"],
+			'December': [20, "1_1", "1_2", "1_3"]
 		}).reduce((deck, [month, cards]) => {
 			return deck.concat(
 				cards.map((card) => {

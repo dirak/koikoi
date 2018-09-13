@@ -4,7 +4,7 @@ const socketio = require('socket.io')
 const koi = require('./koi')
 
 const port = 8888
-const clientpath = `${__dirname}/../client`
+const clientpath = `${__dirname}/../client/`
 const app = express()
 
 app.use(express.static(clientpath))//tell our app where the files to serve exist
@@ -46,6 +46,8 @@ server.listen(port, () => {
 let startNewGame = () => {
 	new_game = koi(players)
 	new_game.deal()
-	players[0].emit("hand", JSON.stringify(new_game.state.hands[0]))
-	players[1].emit("hand", JSON.stringify(new_game.state.hands[1]))
+	for(let [i, player] of players.entries()) {
+		player.emit("hand", JSON.stringify(new_game.state.hands[i]))
+		player.emit("table", JSON.stringify(new_game.state.table))
+	}
 }
