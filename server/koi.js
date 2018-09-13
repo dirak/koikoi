@@ -64,5 +64,20 @@ module.exports = (players) => {
 		//and fill the board up appropriately
 	}
 
+	/*
+	  Implementation of the Fisher-Yates-Shuffle
+	  Goes through the array backwards and swaps the current element with a random
+	  element at a smaller position
+	*/
+	game.shuffle = (deckToShuffle) => {
+		for(let i = deckToShuffle.length - 1; i > 0; i--){
+			let j = Math.floor(Math.random() * (i+1))
+			let temp = deckToShuffle[i];
+			deckToShuffle[i] = deckToShuffle[j];
+			deckToShuffle[j] = temp;
+		}
+		return deckToShuffle
+	}
+
 	return game
 }
