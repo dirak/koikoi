@@ -26,6 +26,7 @@ io.on('connection', (socket) => {
 		players.push(socket)
 		players.map((socket) => socket.emit("message", "Two players connected. Game starting"))	
 		let new_game = koi()
+		new_game.deal()
 	}
 
 	socket.on('message', (text) => {
