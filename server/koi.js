@@ -29,7 +29,7 @@ module.exports = (players) => {
 		}).reduce((deck, [month, cards]) => {
 			return deck.concat(
 				cards.map((card) => {
-					return month+":"+card
+					return month+"_"+card
 				}))
 		}, [])//ok this is a huge mess just ignore it tbh
 
