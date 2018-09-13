@@ -8,9 +8,7 @@ module.exports = (players) => {
 	}
 
 	game.state.deck = 
-		//closure because deck never should be empty
 		//as soon as we create the game it should be populated
-
 		//cards are split up into months, and points. not all months have all points
 		//months are jan->dec, points are 20, 10, 5, 1.
 		//using this for ref: http://hanafuda.richmind.net/hanafuda-cards
