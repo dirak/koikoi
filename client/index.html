@@ -6,7 +6,9 @@
 	</head>
 	<body>
 		<button id="knock_button">send opponent a Knock</button>
-		<div id="entry"></div>
+		<div id="entry">
+
+		</div>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="/src/handlebars.min.js"></script>
 	<script id="board-template" type="text/x-handlebars-template">
@@ -33,7 +35,11 @@
 				{{/each}}
 			</div>
 			<ul id="debug_events">
-		
+				{{#each messages}}
+				<li>
+					{{this}}
+				</li>
+				{{/each}}
 			</ul>
 		</div>
 	</script>

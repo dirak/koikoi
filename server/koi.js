@@ -41,6 +41,9 @@ module.exports = (players) => {
 			if(game.checkMatch(...move)) {
 				console.log("valid move")
 				game.makeMatch(player,...move)
+				//redeal to table
+
+				//check table deal
 				valid_turn = true
 			}
 			if(valid_turn) game.state.turn++//game state changed somehow 
@@ -60,12 +63,15 @@ module.exports = (players) => {
 		for(let i = 0; i < CARDS_IN_DECK; i++) game.state.table.push(game.state.deck.pop())
 	}
 
+	game.dealToTable = () => {
+
+	}
+
 	game.checkMatch = (a, b) => {
 		//check two cards, a and b, for a match.
 		//we just need to check if the suits are the same
 		//since it is months, we can check the first 3 letters for matching
 		//can't use 2, because ju/ly, ju/ne.
-		console.log(a, b)
 		return a.slice(0,3) == b.slice(0,3)
 	}
 

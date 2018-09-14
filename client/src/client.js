@@ -8,11 +8,10 @@ game.state = {
 	possible: []
 }
 
+let messages = []
+
 const writeEvent = (text) => {
-	const parent = document.querySelector("#debug_events")
-	const el = document.createElement("li")
-	el.innerHTML = text
-	parent.appendChild(el)
+	messages.push(text)
 }
 
 const board_source = document.getElementById("board-template").innerHTML;
@@ -45,6 +44,7 @@ socket.on('message', writeEvent)
 
 socket.on('state', (state) => {
 	game.state = JSON.parse(state)
+	game.state.messages = messages
 	drawBoard()
 })
 
