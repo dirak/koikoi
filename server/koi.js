@@ -38,7 +38,7 @@ module.exports = (players) => {
 		if(player == game.state.turn % 2) {
 			//we're in the players turn
 			let valid_turn = false
-			if(move.includes("empty")) {
+			if(move.includes("Empty")) {
 				//we are placing a card on the table
 				game.placeOnTable(player, ...move)
 				game.dealToTable(player)
