@@ -32,6 +32,10 @@ const handleHighlights = () => {
 				document.getElementById(table_card).className += " possible"
 			}
 		}
+		if(game.state.possible.length == 0) {
+			game.state.possible.push("empty")
+			document.getElementById("empty").className += " possible"
+		}
 	}
 	
 }
@@ -44,6 +48,7 @@ socket.on('message', writeEvent)
 
 socket.on('state', (state) => {
 	game.state = JSON.parse(state)
+	game.state.table.push("empty")
 	game.state.messages = messages
 	drawBoard()
 })

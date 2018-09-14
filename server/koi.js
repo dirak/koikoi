@@ -38,12 +38,19 @@ module.exports = (players) => {
 		if(player == game.state.turn % 2) {
 			//we're in the players turn
 			let valid_turn = false
-			if(game.checkMatch(...move)) {
+			if(move.includes("empty")) {
+				//we are placing a card on the table
+				game.placeOnTable(player, ...move)
+				game.dealToTable(player)
+				valid_turn = true
+			}
+			else if(game.checkMatch(...move)) {
 				console.log("valid move")
 				game.makeMatch(player,...move)
 				//redeal to table
 				game.dealToTable(player)
 				//check table deal
+				//if possible matches, not a valid turn yet
 				valid_turn = true
 			}
 			if(valid_turn) game.state.turn++//game state changed somehow 
@@ -61,6 +68,11 @@ module.exports = (players) => {
 		}
 		console.log("[SERVER] Dealing to table")
 		for(let i = 0; i < CARDS_IN_DECK; i++) game.state.table.push(game.state.deck.pop())
+	}
+
+	game.placeOnTable = (player, card, _empty) => {
+		game.state.hands[player] = game.state.hands[player].filter((c) => c !== card)
+		game.state.table.push(card)
 	}
 
 	game.dealToTable = (player) => {
