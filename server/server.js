@@ -1,7 +1,6 @@
 const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
-const handlebars = require('handlebars')
 const koi = require('./koi')
 
 const port = 8888
