@@ -68,7 +68,7 @@ let updateState = () => {
 		let opponent = (i+1)%2
 		let hidden_hand = []
 		hidden_hand.length = new_game.state.hands[opponent].length
-		hidden_hand.fill("blank")
+		hidden_hand.fill("Blank")
 		let clean_state = {
 			hand: new_game.state.hands[i],
 			discards: new_game.state.discards,
