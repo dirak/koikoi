@@ -1,10 +1,10 @@
 module.exports = (players) => {
 	let game = {}
-
 	game.state = {
 		hands: [],
 		discards: [],
 		table: [],
+		turn: 0
 	}
 
 	game.state.deck = 
@@ -33,15 +33,17 @@ module.exports = (players) => {
 				}))
 		}, [])//ok this is a huge mess just ignore it tbh
 
-	game.turn = (players) => {
-		let turn = 0//just incrementing
-		return (player, move) => {
-			if(player == players[turn % 2]) {
-				//we're in the players turn
-				let valid_turn = false
-
-				if(valid_turn) turn++//game state changed somehow 
+	game.turn = (player, move) => {
+		console.log("player", player, game.state.turn, player == game.state.turn % 2)
+		if(player == game.state.turn % 2) {
+			//we're in the players turn
+			let valid_turn = false
+			if(game.checkMatch(...move)) {
+				console.log("valid move")
+				game.makeMatch(player,...move)
+				valid_turn = true
 			}
+			if(valid_turn) game.state.turn++//game state changed somehow 
 		}
 	}
 	
@@ -63,12 +65,19 @@ module.exports = (players) => {
 		//we just need to check if the suits are the same
 		//since it is months, we can check the first 3 letters for matching
 		//can't use 2, because ju/ly, ju/ne.
+		console.log(a, b)
 		return a.slice(0,3) == b.slice(0,3)
 	}
 
-	game.makeMatch = (player, card_a, card_b) => {
+	game.makeMatch = (player,card_a, card_b) => {
 		//this will take the cards and add them to the players discard pile,
 		//and fill the board up appropriately
+		for(let card of [card_a, card_b]){
+			game.state.discards[player] = game.state.discards[player] || []//this helps us init it
+			game.state.discards[player].push(card)
+			game.state.hands[player] = game.state.hands[player].filter((c) => c !== card)
+			game.state.table = game.state.table.filter((c) => c !== card)
+		}
 	}
 
 	return game

@@ -21,7 +21,7 @@ let new_game = null
 
 io.on('connection', (socket) => {
 	console.log("Received connection") 
-
+	let player = players.length
 	if(players.length == 0) {
 		players.push(socket)
 		socket.emit("message", "Waiting for another player ...")
@@ -29,10 +29,17 @@ io.on('connection', (socket) => {
 		players.push(socket)
 		players.map((socket) => socket.emit("message", "Two players connected. Game starting"))	
 		startNewGame()
+		updateState()
 	}
 
 	socket.on('message', (text) => {
 		socket.broadcast.emit('message', text)//send to everyone BUT the original client
+	})
+
+	socket.on('select_card', (packet) => {
+		console.log("Received a card selection")
+		new_game.turn(player, JSON.parse(packet))
+		updateState()
 	})
 })
 
@@ -47,6 +54,9 @@ server.listen(port, () => {
 let startNewGame = () => {
 	new_game = koi(players)
 	new_game.deal()
+}
+
+let updateState = () => {
 	for(let [i, player] of players.entries()) {
 		//the opponent will always be the value that we aren't
 		//so if we are 1, then they are 0.
@@ -58,7 +68,6 @@ let startNewGame = () => {
 		let hidden_hand = []
 		hidden_hand.length = new_game.state.hands[opponent].length
 		hidden_hand.fill("blank")
-
 		let clean_state = {
 			hand: new_game.state.hands[i],
 			discards: new_game.state.discards,

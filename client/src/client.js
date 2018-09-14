@@ -19,7 +19,6 @@ const board_source = document.getElementById("board-template").innerHTML;
 const board_template = Handlebars.compile(board_source)
 
 const drawBoard = () => {
-	console.log(game.state)
 	document.getElementById("entry").innerHTML = board_template(game.state)
 	handleHighlights()
 }
@@ -56,6 +55,15 @@ document.querySelector("#knock_button").addEventListener('click',() => {
 let selectHand = (card) => {
 	game.state.selected = card
 	drawBoard()
+}
+
+let selectTable = (card) => {
+	console.log(card)
+	if(game.state.possible.includes(card)) {
+		//it was one of the selections, let's send it off to the server and see
+		console.log("sending selection")
+		socket.emit('select_card', JSON.stringify([game.state.selected, card]))
+	}
 }
 
 let checkMatch = (a, b) => {

@@ -20,7 +20,7 @@
 			</div>
 			<div id="table">
 				{{#each table}}
-				<a class="card">
+				<a class="card" onclick="selectTable('{{this}}')">
 					<img src="/assets/cards/{{this}}.png" id="{{this}}">
 				</a>
 				{{/each}}
