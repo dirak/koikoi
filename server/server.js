@@ -1,6 +1,7 @@
 const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
+const handlebars = require('handlebars')
 const koi = require('./koi')
 
 const port = 8888
@@ -46,6 +47,7 @@ server.listen(port, () => {
 let startNewGame = () => {
 	new_game = koi(players)
 	new_game.deal()
+	console.log(players.length)
 	for(let [i, player] of players.entries()) {
 		//the opponent will always be the value that we aren't
 		//so if we are 1, then they are 0.
@@ -54,9 +56,18 @@ let startNewGame = () => {
 		//i = 0, 1 mod 2 = 1
 		//i = 1, 2 mod 2 = 0
 		let opponent = (i+1)%2
-		player.emit("hand", JSON.stringify(new_game.state.hands[i]))
-		//we want them to know the opponents hand size but that is all
-		player.emit("opp_hand", new_game.state.hands[opponent].length)
-		player.emit("table", JSON.stringify(new_game.state.table))
+		let hidden_hand = []
+		hidden_hand.length = new_game.state.hands[opponent].length
+		hidden_hand.fill("blank")
+
+		let clean_state = {
+			hand: new_game.state.hands[i],
+			discards: new_game.state.discards,
+			table: new_game.state.table,
+			opp: hidden_hand
+		}
+		console.log("Sending player", i, "state", JSON.stringify(clean_state))
+		player.emit("state", JSON.stringify(clean_state))
 	}
+	console.log(new_game.state)
 }
