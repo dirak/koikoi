@@ -47,7 +47,6 @@ server.listen(port, () => {
 let startNewGame = () => {
 	new_game = koi(players)
 	new_game.deal()
-	console.log(players.length)
 	for(let [i, player] of players.entries()) {
 		//the opponent will always be the value that we aren't
 		//so if we are 1, then they are 0.
@@ -66,8 +65,6 @@ let startNewGame = () => {
 			table: new_game.state.table,
 			opp: hidden_hand
 		}
-		console.log("Sending player", i, "state", JSON.stringify(clean_state))
 		player.emit("state", JSON.stringify(clean_state))
 	}
-	console.log(new_game.state)
 }
