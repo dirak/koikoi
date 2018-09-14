@@ -42,7 +42,7 @@ module.exports = (players) => {
 				console.log("valid move")
 				game.makeMatch(player,...move)
 				//redeal to table
-
+				game.dealToTable(player)
 				//check table deal
 				valid_turn = true
 			}
@@ -63,7 +63,7 @@ module.exports = (players) => {
 		for(let i = 0; i < CARDS_IN_DECK; i++) game.state.table.push(game.state.deck.pop())
 	}
 
-	game.dealToTable = () => {
+	game.dealToTable = (player) => {
 		let drawnCard = game.state.deck.pop()
 		//Find all possible matches on the table
 		let possibleMatches = []
@@ -75,15 +75,15 @@ module.exports = (players) => {
 				game.state.table.push(drawnCard)
 				break
 			case 1: //One match, put match in discard and remove from table
-				game.state.discards.push(drawnCard)
-				game.state.discards.push(possibleMatches[0])
+				game.state.discards[player].push(drawnCard)
+				game.state.discards[player].push(possibleMatches[0])
 				game.state.table = game.state.table.filter((c) => c !== possibleMatches[0])
 				break
 			case 2: //Two matches, need player to choose
 				//need the player to choose between the two
 				//this is a placeholder:
-				game.state.discards.push(drawnCard)
-				game.state.discards.push(possibleMatches[0])
+				game.state.discards[player].push(drawnCard)
+				game.state.discards[player].push(possibleMatches[0])
 				game.state.table = game.state.table.filter((c) => c !== possibleMatches[0])
 			break
 		}
