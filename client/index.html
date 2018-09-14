@@ -21,14 +21,14 @@
 			<div id="table">
 				{{#each table}}
 				<a class="card">
-					<img src="/assets/cards/{{this}}.png">
+					<img src="/assets/cards/{{this}}.png" id="{{this}}">
 				</a>
 				{{/each}}
 			</div>
 			<div class="hand" id="your_hand">
 				{{#each hand}}
-				<a class="card">
-					<img src="/assets/cards/{{this}}.png">
+				<a class="card" onclick="selectHand('{{this}}')">
+					<img src="/assets/cards/{{this}}.png" id="{{this}}" >
 				</a>
 				{{/each}}
 			</div>

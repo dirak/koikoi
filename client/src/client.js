@@ -3,7 +3,9 @@ game.state = {
 	hand: [],
 	opp: [],
 	discards: [],
-	table: []
+	table: [],
+	selected: null,
+	possible: []
 }
 
 const writeEvent = (text) => {
@@ -19,6 +21,21 @@ const board_template = Handlebars.compile(board_source)
 const drawBoard = () => {
 	console.log(game.state)
 	document.getElementById("entry").innerHTML = board_template(game.state)
+	handleHighlights()
+}
+
+const handleHighlights = () => {
+	if(game.state.selected) {
+		game.state.possible = []
+		document.getElementById(game.state.selected).className += " selected"
+		for(let table_card of game.state.table) {
+			if(checkMatch(table_card, game.state.selected)) {
+				game.state.possible.push(table_card)
+				document.getElementById(table_card).className += " possible"
+			}
+		}
+	}
+	
 }
 
 drawBoard()
@@ -35,3 +52,16 @@ socket.on('state', (state) => {
 document.querySelector("#knock_button").addEventListener('click',() => {
 	socket.emit('message', 'knock-knock')
 })
+
+let selectHand = (card) => {
+	game.state.selected = card
+	drawBoard()
+}
+
+let checkMatch = (a, b) => {
+	//check two cards, a and b, for a match.
+	//we just need to check if the suits are the same
+	//since it is months, we can check the first 3 letters for matching
+	//can't use 2, because ju/ly, ju/ne.
+	return a.slice(0,3) == b.slice(0,3)
+}
