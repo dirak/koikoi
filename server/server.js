@@ -23,10 +23,10 @@ let new_game = null
 io.on('connection', (socket) => {
 	console.log("Received connection") 
 	let player = players.length
-	if(players.length == 0 && false) {
+	if(players.length == 0) {
 		players.push(socket)
 		socket.emit("message", "Waiting for another player ...")
-	} else if(players.length == 1|| true) {
+	} else if(players.length == 1) {
 		players.push(socket)
 		players.map((socket) => socket.emit("message", "Two players connected. Game starting"))	
 		startNewGame()
@@ -72,7 +72,8 @@ let updateState = () => {
 		hidden_hand.fill("Blank")
 		let clean_state = {
 			hand: new_game.state.hands[i],
-			discards: new_game.state.discards,
+			player_discard: new_game.state.discards[i],
+			opponent_discard: new_game.state.discards[opponent],
 			table: new_game.state.table,
 			draw: new_game.state.draw,
 			selected: null,//clear our selection. not sure if necessary
