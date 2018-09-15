@@ -23,10 +23,10 @@ let new_game = null
 io.on('connection', (socket) => {
 	console.log("Received connection") 
 	let player = players.length
-	if(players.length == 0) {
+	if(players.length == 0 && false) {
 		players.push(socket)
 		socket.emit("message", "Waiting for another player ...")
-	} else if(players.length == 1) {
+	} else if(players.length == 1|| true) {
 		players.push(socket)
 		players.map((socket) => socket.emit("message", "Two players connected. Game starting"))	
 		startNewGame()
@@ -66,7 +66,7 @@ let updateState = () => {
 		//the shorthand for this is i+1 mod 2:
 		//i = 0, 1 mod 2 = 1
 		//i = 1, 2 mod 2 = 0
-		let opponent = (i+1)%2
+		let opponent = (i+1)%players.length
 		let hidden_hand = []
 		hidden_hand.length = new_game.state.hands[opponent].length
 		hidden_hand.fill("Blank")

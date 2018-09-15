@@ -1,3 +1,33 @@
+let config = {
+	type: Phaser.AUTO,
+	width: 800,
+	height: 600,
+	parent: 'canvas',
+	scene: {
+		preload: preload,
+		create: create,
+		update: update
+	}
+}
+
+let game = new Phaser.Game(config)
+
+function preload() {
+	this.load.multiatlas('cards', 'assets/spritesheet.json','assets')
+}
+
+function create() {
+	let hand = 150
+	let card = 70/2 + 10
+	for([i,c] of state.hand.entries()) {
+		this.add.sprite(hand+(card*i), hand, 'cards', c)
+	}
+}
+
+function update() {
+
+}
+
 let state = {
 	hand: [],
 	opp: [],
@@ -14,11 +44,7 @@ const writeEvent = (text) => {
 	messages.push(text)
 }
 
-const board_source = document.getElementById("board-template").innerHTML;
-const board_template = Handlebars.compile(board_source)
-
 const drawBoard = () => {
-	document.getElementById("entry").innerHTML = board_template(state)
 	handleHighlights()
 }
 
@@ -47,7 +73,6 @@ const handleHighlights = () => {
 	
 }
 
-drawBoard()
 writeEvent("Listening to Server")
 
 const socket = io()
@@ -58,10 +83,6 @@ socket.on('state', (game_state) => {
 	state.table.push("Empty")
 	state.messages = messages
 	drawBoard()
-})
-
-document.querySelector("#knock_button").addEventListener('click',() => {
-	socket.emit('message', 'knock-knock')
 })
 
 let selectHand = (card) => {
