@@ -1,39 +1,40 @@
 module.exports = (players) => {
 	let game = {}
 	game.state = {
+		table: [],
 		hands: [],
 		discards: [],
-		table: [],
 		turn: 0,
 		possible: [],
 		draw: null
 	}
+	//as soon as we create the game it should be populated
+	//cards are split up into months, and points. not all months have all points
+	//months are jan->dec, points are 20, 10, 5, 1.
+	//using this for ref: http://hanafuda.richmind.net/hanafuda-cards
+	game.state.deck = Object.entries({
+		'January': [20, 5, "1_1", "1_2"],
+		'February': [10, 5, "1_1", "1_2"],
+		'March': [20, 5, "1_1", "1_2"],
+		'April': [10, 5, "1_1", "1_2"],
+		'May': [10, 5, "1_1", "1_2"],
+		'June': [10, 5,"1_1", "1_2"],
+		'July': [10, 5, "1_1", "1_2"],
+		'August': [20, 10, "1_1", "1_2"],
+		'September': [10, 5, "1_1", "1_2"],
+		'October': [10, 5, "1_1", "1_2"],
+		'November': [20, 10, 5, "1_1"],
+		'December': [20, "1_1", "1_2", "1_3"]
+	}).reduce((deck, [month, cards]) => {
+		return deck.concat(
+			cards.map((card) => {
+				return month+"_"+card
+			}))
+	}, [])//ok this is a huge mess just ignore it tbh
 
-	game.state.deck = 
-		//as soon as we create the game it should be populated
-		//cards are split up into months, and points. not all months have all points
-		//months are jan->dec, points are 20, 10, 5, 1.
-		//using this for ref: http://hanafuda.richmind.net/hanafuda-cards
-
-		Object.entries({
-			'January': [20, 5, "1_1", "1_2"],
-			'February': [10, 5, "1_1", "1_2"],
-			'March': [20, 5, "1_1", "1_2"],
-			'April': [10, 5, "1_1", "1_2"],
-			'May': [10, 5, "1_1", "1_2"],
-			'June': [10, 5,"1_1", "1_2"],
-			'July': [10, 5, "1_1", "1_2"],
-			'August': [20, 10, "1_1", "1_2"],
-			'September': [10, 5, "1_1", "1_2"],
-			'October': [10, 5, "1_1", "1_2"],
-			'November': [20, 10, 5, "1_1"],
-			'December': [20, "1_1", "1_2", "1_3"]
-		}).reduce((deck, [month, cards]) => {
-			return deck.concat(
-				cards.map((card) => {
-					return month+"_"+card
-				}))
-		}, [])//ok this is a huge mess just ignore it tbh
+	for(player of players) {
+		game.state.discards.push([])
+	}
 
 	game.checkTurn = (player) => { return player == game.state.turn % 2 }
 
@@ -116,7 +117,6 @@ module.exports = (players) => {
 		//this will take the cards and add them to the players discard pile,
 		//and fill the board up appropriately
 		for(let card of [card_a, card_b]){
-			game.state.discards[player] = game.state.discards[player] || []//this helps us init it
 			game.state.discards[player].push(card)
 			game.state.hands[player] = game.state.hands[player].filter((c) => c !== card)
 			game.state.table = game.state.table.filter((c) => c !== card)
