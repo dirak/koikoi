@@ -142,3 +142,189 @@ let shuffle = (deckToShuffle) => {
 	}
 	return deckToShuffle
 }
+
+
+//Returns an Array where the first element is the number of points and the following elements are the yakus
+let checkForYakus = (player, card_a, card_b) =>{
+	let totalPoints = 0
+	let currPoints = 0
+	let yakus = []
+	if(card_a.split('_')[1] == 1 || card_b.split('_')[1] == 1){
+		currPoints = kasu(player)
+		if(currPoints > 0){
+			totalPoints += currPoints
+			yakus.push('kasu')
+		}
+	}
+	if(card_a.split('_')[1] == 5 || card_b.split('_')[1] == 5){
+		currPoints = tan(player)
+		if(currPoints>0){
+			totalPoints += currPoints
+			yakus.push('tan')
+		}
+		currPoints = akatan(player)
+		if(currPoints > 0){
+			totalPoints += currPoints
+			yakus.push('tan')
+		}
+		currPoints = aotan(player)
+		if(currPoints > 0){
+			totalPoints += currPoints
+			yakus.push('aotan')
+		}
+		currPoints = akatanAotanNoChokufu(player)
+		if(currPoints > 0){
+			totalPoints += currPoints
+			yakus.push('akatanAotanNoChokufu')
+		}
+	}
+	if(card_a.split('_')[1] == 10 || card_b.split('_')[1] == 10){
+		currPoints = tane(player)
+		if(currPoints > 0){
+			totalPoints += currPoints
+			yakus.push('tane')
+		}
+		currPoints = inoshikacho(player)
+		if(currPoints > 0){
+			totalPoints += currPoints
+			yakus.push('inoshikacho')
+		}
+	}
+	if(card_a.split('_')[1] == 20 || card_b.split('_')[1] == 20){
+		totalPoints += light(player)
+		switch(light(player)){
+			case 5:
+				yakus.push('sanko')
+				break
+			case 7:
+				yakus.push('ameShiko')
+				break
+			case 8:
+				yakus.push('shiko')
+				break
+			case 10:
+				yakus.push('goko')
+				break
+		}
+	}
+	if(card_a == 'August_20' || card_b == 'August_20' || card_a == 'September_10' || card_b == 'September_10'){
+		currPoints = tsukimiDeIppai(player)
+		if(currPoints > 0){
+			totalPoints += currPoints
+			yakus.push('tsukimiDeIppai')
+		}
+	}
+
+	if(card_a == 'March_20' || card_b == 'March_20' || card_a == 'September_10' || card_b == 'September_10'){
+		currPoints =  hanamiDeIppai(player)
+		if(currPoints > 0){
+			totalPoints += currPoints
+			yakus.push('hanamiDeIppai')
+		}
+	}
+
+	return [totalPoints, ...yakus]
+}
+
+//10 1-Point Cards
+//returns 0 if there are less
+//else, returns number of points gained
+/*let kasu = (player) => {
+	let numberOfCards = 0
+	for(let currentCard of discards[player]){
+		if(currentCard.split('_')[1]== '1') numberOfCards += 1
+	}
+	if(numberOfCards < 10) return 0
+	return numberOfCards - 9
+}
+*/
+let kasu = (player) => {
+    return Math.max(0, discards[player].filter((card) => card.split('_')[1] == 1).length - 9)
+}
+
+//5 5-Point Cards
+//returns 0 if there are less
+//else, returns number of points gained
+/*let tan = (player) => {
+	let numberOfCards = 0
+	for(let currentCard of discards[player]){
+		if(currentCard.split('_')[1] == '5') numberOfCards += 1
+	}
+	if(numberOfCards < 5) return 0
+	return numberOfCards - 4
+}*/
+let tan = (player) => {
+	return Math.max(0, discards[player].filter((card) => card.split('_')[1] == 5).length - 4)
+}
+
+//3 red poem tanzaku (5pt) + 1pt for each add. tanzaku
+let akatan = (player) => {
+	//return discards[player].includes('January_5')&&discards[player].includes('February_5')&&discards[player].includes('March_5') ? discards[player].filter((card) => card.split('_')[1] == 5).length + 2 : 0
+	if(discards[player].includes('January_5')&&discards[player].includes('February_5')&&discards[player].includes('March_5')){
+		return discards[player].filter((card) => card.split('_')[1] == 5).length + 2
+	}
+	return 0
+}
+
+//3 blue tanzaku (5pt) + 1pt for each additional tanzaku
+let aotan = (player) => {
+	if(discards[player].includes('June_5')&&discards[player].includes('September_5')&&discards[player].includes('October_5')){
+		return discards[player].filter((card) => card.split('_')[1] == 5).length + 2
+	}
+	return 0
+}
+
+//aotan and akatan (10pt) + 1pt for each additional tanzaku
+let akatanAotanNoChokufu = (player) => {
+	if(akatan(player) > 0 && aotan(player) > 0){
+		return discards[player].filter((card) => card.split('_')[1] == 5).length + 4
+	}
+}
+
+//5 10pt-cards (1pt) + 1pt for each add. 10pt card
+let tane = (player) => {
+	return Math.max(0, discards[player].filter((card) => card.split('_')[1] == 10).length - 4)
+}
+
+//Boar, Deer, Butterfly (5pt) + 1pt for each add. 10pt card
+let inoshikacho = (player) => {
+	if(discards[player].includes('June_10')&&discards[player].includes('July_10')&&discards[player].includes('October_10')){
+		return discards[player].filter((card) => card.split('_')[1] == 10).length + 2
+	}
+	return 0
+}
+
+//Moon and Sake Cup (5pt)
+let tsukimiDeIppai = (player) => {
+	if(discards[player].includes('August_20')&&discards[player].includes('September_10')){
+		return 5
+	}
+	return 0
+}
+
+//Curtain and Sake Cup (5pt)
+let hanamiDeIppai = (player) => {
+	if(discards[player].includes('March_20')&&discards[player].includes('September_10')){
+		return 5
+	}
+	return 0	
+}
+
+//This is Sanko(3light), Ame Shiko (four light with rain), Shiko (four light without rain) and Goko (five light) all in one
+let light = (player) => {
+	switch (discards[player].filter((card) => card.split('_')[1] == 20).length){
+		default:
+			return 0
+			break
+		case 3:
+			return 5
+			break
+		case 4:
+			if(discards[player].includes('November_20')) return 7
+			else return 8
+			break
+		case 5:
+			return 10
+			break
+	}
+}
