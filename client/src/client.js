@@ -25,6 +25,7 @@ const drawBoard = () => {
 const handleHighlights = () => {
 	//i want all of this to be part of the template eventually
 	if(state.draw) {
+		document.getElementById(state.draw).className += " selected"
 		for(let possible of state.possible) {
 			document.getElementById(possible).className += " possible"
 		}
