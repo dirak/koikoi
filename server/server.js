@@ -39,7 +39,8 @@ io.on('connection', (socket) => {
 
 	socket.on('select_card', (packet) => {
 		console.log("Received a card selection")
-		new_game.turn(player, JSON.parse(packet))
+		let valid_turn = new_game.turn(player, JSON.parse(packet))
+		console.log("valid turn:", valid_turn)
 		updateState()
 	})
 })
@@ -73,7 +74,11 @@ let updateState = () => {
 			hand: new_game.state.hands[i],
 			discards: new_game.state.discards,
 			table: new_game.state.table,
-			opp: hidden_hand
+			draw: new_game.state.draw,
+			selected: null,//clear our selection. not sure if necessary
+			possible: new_game.state.possible,
+			opp: hidden_hand,
+			turn: new_game.checkTurn(i),
 		}
 		player.emit("state", JSON.stringify(clean_state))
 	}

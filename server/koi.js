@@ -4,7 +4,9 @@ module.exports = (players) => {
 		hands: [],
 		discards: [],
 		table: [],
-		turn: 0
+		turn: 0,
+		possible: [],
+		draw: null
 	}
 
 	game.state.deck = 
@@ -32,29 +34,28 @@ module.exports = (players) => {
 					return month+"_"+card
 				}))
 		}, [])//ok this is a huge mess just ignore it tbh
+	
+	game.checkTurn = (player) => { return player == game.state.turn % 2 }
 
 	game.turn = (player, move) => {
 		console.log("player", player, game.state.turn, player == game.state.turn % 2)
-		if(player == game.state.turn % 2) {
+		if(game.checkTurn(player)) {
 			//we're in the players turn
 			let valid_turn = false
 			if(move.includes("Empty")) {
 				//we are placing a card on the table
 				game.placeOnTable(player, ...move)
-				game.dealToTable(player)
-				valid_turn = true
+				valid_turn = game.dealToTable(player)
 			}
 			else if(game.checkMatch(...move)) {
-				console.log("valid move")
 				game.makeMatch(player,...move)
 				//redeal to table
-				game.dealToTable(player)
-				//check table deal
-				//if possible matches, not a valid turn yet
-				valid_turn = true
+				valid_turn = game.dealToTable(player)
 			}
 			if(valid_turn) game.state.turn++//game state changed somehow 
+			return valid_turn
 		}
+		return false 
 	}
 	
 	game.deal = () => {
@@ -76,6 +77,13 @@ module.exports = (players) => {
 	}
 
 	game.dealToTable = (player) => {
+		if(game.state.draw != null && game.state.possible.length != 0) {
+			console.log("This is a draw match")
+			game.state.draw = null
+			game.state.possible = []
+			return true
+		}
+		
 		let drawnCard = game.state.deck.pop()
 		//Find all possible matches on the table
 		let possibleMatches = []
@@ -84,20 +92,15 @@ module.exports = (players) => {
 		}
 		switch(possibleMatches.length){
 			case 0: //No matches, put drawn card on table
+				console.log("pushing to table", drawnCard)
 				game.state.table.push(drawnCard)
-				break
-			case 1: //One match, put match in discard and remove from table
-				game.state.discards[player].push(drawnCard)
-				game.state.discards[player].push(possibleMatches[0])
-				game.state.table = game.state.table.filter((c) => c !== possibleMatches[0])
-				break
-			case 2: //Two matches, need player to choose
-				//need the player to choose between the two
-				//this is a placeholder:
-				game.state.discards[player].push(drawnCard)
-				game.state.discards[player].push(possibleMatches[0])
-				game.state.table = game.state.table.filter((c) => c !== possibleMatches[0])
-			break
+				return true
+			case 1: case 2:
+				game.state.possible = possibleMatches
+				game.state.table.push(drawnCard)
+				game.state.draw = drawnCard
+				console.log(game.state.possible, drawnCard)
+				return false
 		}
 	}
 
