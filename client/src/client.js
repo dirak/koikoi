@@ -18,6 +18,8 @@ const DISCARD_10_X = DISCARD_1_X
 const DISCARD_20_X = DISCARD_10_X + CARD_WIDTH + CARD_PADDING * 6
 const DISCARD_TOP_Y = HAND_BOTTOM_Y - CARD_HEIGHT - CARD_PADDING
 const DISCARD_BOTTOM_Y = HAND_BOTTOM_Y
+const DISCARD_OPP_TOP_Y = HAND_TOP_Y + CARD_HEIGHT + CARD_PADDING
+const DISCARD_OPP_BOTTOM_Y = HAND_TOP_Y
 let config = {
 	type: Phaser.AUTO,
 	width: GAME_WIDTH,
@@ -47,7 +49,19 @@ function update() {
 	if(state.update) {
 		state.update = false
 		draw.call(this)
-		bindCards.call(this)
+		if(state.handle_koi) {
+			console.log(state.yakus)
+			let message = Object.keys(state.yakus).join(", ")
+			let points = Object.values(state.yakus).reduce((a, b) => a + b, 0)
+			if(state.last_koi == state.player) {
+				message = "You got koi: " + message + " for a total of " + points
+			} else {
+				message = "They got koi: " + message + " for a total of " + points
+			}
+			KoiKoiPopUp.call(this, message)
+		} else {
+			bindCards.call(this)
+		}
 		if(state.draw) {
 			this.table
 				.getChildren()
@@ -58,6 +72,14 @@ function update() {
 				.forEach((card) => card.tint = 0xFF9999)
 		}
 	}
+}
+
+function KoiKoiPopUp(message) {
+	this.add.text(40, 140, 
+		message, {
+			fontSize: '32px',
+			fill: '#000'
+		});
 }
 
 function bindCards() {
@@ -208,6 +230,65 @@ function draw() {
 			setXY: {
 				x: DISCARD_1_X,
 				y: DISCARD_TOP_Y,
+				stepX: 2,
+				stepY: 0
+			}
+		}
+	])
+
+	this.opp_discard = this.add.group([
+		{//20 pile
+			key: 'cards',
+			frame: splitDiscard(state.opponent_discard, 20),
+			setScale: {
+				x: 0.75,
+				y: 0.75
+			},
+			setXY: {
+				x: DISCARD_20_X,
+				y: DISCARD_OPP_BOTTOM_Y,
+				stepX: (CARD_WIDTH * 0.75) / 4,
+				stepY: 0
+			}
+		},
+		{//10 pile
+			key: 'cards',
+			frame: splitDiscard(state.opponent_discard, 10),
+			setScale: {
+				x: 0.75,
+				y: 0.75
+			},
+			setXY: {
+				x: DISCARD_10_X,
+				y: DISCARD_OPP_BOTTOM_Y,
+				stepX: (CARD_WIDTH * 0.75) / 4,
+				stepY: 0
+			}
+		},
+		{//50 pile
+			key: 'cards',
+			frame: splitDiscard(state.opponent_discard, 5),
+			setScale: {
+				x: 0.75,
+				y: 0.75
+			},
+			setXY: {
+				x: DISCARD_5_X,
+				y: DISCARD_OPP_TOP_Y,
+				stepX: (CARD_WIDTH * 0.75) / 4,
+				stepY: 0
+			}
+		},
+		{//1 pile
+			key: 'cards',
+			frame: splitDiscard(state.opponent_discard, 1),
+			setScale: {
+				x: 0.75,
+				y: 0.75
+			},
+			setXY: {
+				x: DISCARD_1_X,
+				y: DISCARD_OPP_TOP_Y,
 				stepX: 2,
 				stepY: 0
 			}

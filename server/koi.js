@@ -6,6 +6,9 @@ module.exports = (players) => {
 		discards: [],
 		turn: 0,
 		possible: [],
+		yakus: [],
+		last_koi: null,
+		handle_koi: false,
 		draw: null
 	}
 	//as soon as we create the game it should be populated
@@ -34,6 +37,7 @@ module.exports = (players) => {
 
 	for(player of players) {
 		game.state.discards.push([])
+		game.state.yakus.push([])
 	}
 
 	game.checkTurn = (player) => { return player == game.state.turn % 2 }
@@ -53,7 +57,7 @@ module.exports = (players) => {
 				//redeal to table
 				valid_turn = game.dealToTable(player)
 			}
-			if(valid_turn) game.state.turn++//game state changed somehow 
+			if(valid_turn) game.state.turn++
 			return valid_turn
 		}
 		return false 
@@ -104,6 +108,22 @@ module.exports = (players) => {
 				return false
 		}
 	}
+	//returns an object with a yaku code and point value
+	game.checkForYakus = (player) =>{
+		let yakus = {}
+		yakus['kasu'] = kasu(game.state, player)
+		yakus['tan'] = tan(game.state, player)
+		yakus['akatan'] = akatan(game.state, player)
+		yakus['aotan'] = aotan(game.state, player)
+		yakus['akatanAotanNoChokufu'] = akatanAotanNoChokufu(game.state, player)
+		yakus['tane'] = tane(game.state, player)
+		yakus['inoshikacho'] = inoshikacho(game.state, player)
+		yakus['light'] = light(game.state, player)
+		yakus['tsukimiDeIppai'] = tsukimiDeIppai(game.state, player)
+		yakus['hanamiDeIppai'] = hanamiDeIppai(game.state, player)
+		console.log("yakus", yakus)
+		return Object.filter(yakus, yaku => yaku > 0)
+	}
 
 	game.checkMatch = (a, b) => {
 		//check two cards, a and b, for a match.
@@ -127,38 +147,6 @@ module.exports = (players) => {
 }
 
 const CARDS_IN_DECK = 8
-
-//returns an object with a yaku code and point value
-let checkForYakus = (state, player, card) =>{
-	let yakus = {}
-	let card_value = card.split('_')[1]//only need to split once
-	if(card_value == 1){
-		yakus['kasu'] = kasu(state, player)
-	}
-	if(card_value == 5){
-		yakus['tan'] = tan(state, player)
-		yakus['akatan'] = akatan(state, player)
-		yakus['aotan'] = aotan(state, player)
-		yakus['akatanAotanNoChokufu'] = akatanAotanNoChokufu(state, player)
-	}
-	if(card_value.split('_')[1] == 10){
-		yakus['tane'] = tane(state, player)
-		yakus['inoshikacho'] = inoshikacho(state, player)
-	}
-	if(card_value.split('_')[1] == 20){
-		//the names only matter on client side so this should be sufficient
-		yakus['light'] = light(state, player)
-	}
-	if(card == 'August_20' || card == 'September_10'){
-		yakus['tsukimiDeIppai'] = tsukimiDeIppai(state, player)
-	}
-
-	if(card == 'March_20'|| card == 'September_10'){
-		yakus['hanamiDeIppai'] = hanamiDeIppai(state, player)
-	}
-
-	return Object.filter(yakus, yaku => yaku > 0)
-}
 
 //10 1-Point Cards
 //returns 0 if there are less
@@ -212,7 +200,7 @@ let aotan = (state, player) => {
 let akatanAotanNoChokufu = (state, player) => {
 	if(akatan(state, player) > 0 && aotan(state, player) > 0){
 		return state.discards[player].filter((card) => card.split('_')[1] == 5).length + 4
-	}
+	} else return 0
 }
 
 //5 10pt-cards (1pt) + 1pt for each add. 10pt card

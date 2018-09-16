@@ -40,6 +40,16 @@ io.on('connection', (socket) => {
 	socket.on('select_card', (packet) => {
 		console.log("Received a card selection")
 		let valid_turn = new_game.turn(player, JSON.parse(packet))
+		if(valid_turn) {
+			let yakus = new_game.checkForYakus(player)
+			if(Object.keys(yakus).length > 0) {
+				//we should probably put this in the actual game state
+				//no reason to alter state outside of koi.js
+				new_game.state.yakus[player] = yakus
+				new_game.state.last_koi = player
+				new_game.state.handle_koi = true
+			}
+		}
 		console.log("valid turn:", valid_turn)
 		updateState()
 	})
@@ -80,6 +90,10 @@ let updateState = () => {
 			possible: new_game.state.possible,
 			opp: hidden_hand,
 			turn: new_game.checkTurn(i),
+			last_koi: new_game.state.last_koi,
+			yakus: new_game.state.yakus,
+			handle_koi: new_game.state.handle_koi,
+			player: i
 		}
 		player.emit("state", JSON.stringify(clean_state))
 	}
