@@ -5,44 +5,11 @@
 		Koi
 	</head>
 	<body>
-		<button id="knock_button">send opponent a Knock</button>
-		<div id="entry">
-
+		<div id="canvas">
+			
 		</div>
 	<script src="/socket.io/socket.io.js"></script>
-	<script src="/src/handlebars.min.js"></script>
-	<script id="board-template" type="text/x-handlebars-template">
-		<div id="board">
-			<div class="hand" id="opp_hand">
-				{{#each opp}}
-				<a class="card">
-					<img src="/assets/cards/{{this}}.png">
-				</a>
-				{{/each}}
-			</div>
-			<div id="table">
-				{{#each table}}
-				<a class="card" onclick="selectTable('{{this}}')">
-					<img src="/assets/cards/{{this}}.png" id="{{this}}">
-				</a>
-				{{/each}}
-			</div>
-			<div class="hand" id="your_hand">
-				{{#each hand}}
-				<a class="card" onclick="selectHand('{{this}}')">
-					<img src="/assets/cards/{{this}}.png" id="{{this}}" >
-				</a>
-				{{/each}}
-			</div>
-			<ul id="debug_events">
-				{{#each messages}}
-				<li>
-					{{this}}
-				</li>
-				{{/each}}
-			</ul>
-		</div>
-	</script>
+	<script src="https://cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
 	<script src="src/client.js"></script>
 	</body>
 

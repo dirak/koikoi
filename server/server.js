@@ -40,6 +40,16 @@ io.on('connection', (socket) => {
 	socket.on('select_card', (packet) => {
 		console.log("Received a card selection")
 		let valid_turn = new_game.turn(player, JSON.parse(packet))
+		if(valid_turn) {
+			let yakus = new_game.checkForYakus(player)
+			if(Object.keys(yakus).length > 0) {
+				//we should probably put this in the actual game state
+				//no reason to alter state outside of koi.js
+				new_game.state.yakus[player] = yakus
+				new_game.state.last_koi = player
+				new_game.state.handle_koi = true
+			}
+		}
 		console.log("valid turn:", valid_turn)
 		updateState()
 	})
@@ -66,19 +76,24 @@ let updateState = () => {
 		//the shorthand for this is i+1 mod 2:
 		//i = 0, 1 mod 2 = 1
 		//i = 1, 2 mod 2 = 0
-		let opponent = (i+1)%2
+		let opponent = (i+1)%players.length
 		let hidden_hand = []
 		hidden_hand.length = new_game.state.hands[opponent].length
 		hidden_hand.fill("Blank")
 		let clean_state = {
 			hand: new_game.state.hands[i],
-			discards: new_game.state.discards,
+			player_discard: new_game.state.discards[i],
+			opponent_discard: new_game.state.discards[opponent],
 			table: new_game.state.table,
 			draw: new_game.state.draw,
 			selected: null,//clear our selection. not sure if necessary
 			possible: new_game.state.possible,
 			opp: hidden_hand,
 			turn: new_game.checkTurn(i),
+			last_koi: new_game.state.last_koi,
+			yakus: new_game.state.yakus,
+			handle_koi: new_game.state.handle_koi,
+			player: i
 		}
 		player.emit("state", JSON.stringify(clean_state))
 	}
