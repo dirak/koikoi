@@ -17,41 +17,51 @@ const server = http.createServer(app)//create the server, this will help us hand
 const io = socketio(server)//communication with the client
 
 //in the future we want to split these up into rooms so we can have multiple games going
-let players = []
-let new_game = null
+let rooms = {}
+
+let new_game = {}
+
 
 io.on('connection', (socket) => {
-	console.log("Received connection") 
-	let player = players.length
-	if(players.length == 0) {
-		players.push(socket)
-		socket.emit("message", "Waiting for another player ...")
-	} else if(players.length == 1) {
-		players.push(socket)
-		players.map((socket) => socket.emit("message", "Two players connected. Game starting"))	
-		startNewGame()
-		updateState()
-	}
-
-	socket.on('message', (text) => {
-		socket.broadcast.emit('message', text)//send to everyone BUT the original client
-	})
-
-	socket.on('select_card', (packet) => {
-		console.log("Received a card selection")
-		let valid_turn = new_game.turn(player, JSON.parse(packet))
-		if(valid_turn) {
-			let yakus = new_game.checkForYakus(player)
-			if(Object.keys(yakus).length > 0) {
-				//we should probably put this in the actual game state
-				//no reason to alter state outside of koi.js
-				new_game.state.yakus[player] = yakus
-				new_game.state.last_koi = player
-				new_game.state.handle_koi = true
-			}
+	//now we just bind new room or join room
+	socket.on('join_room', (room) => {
+		console.log(`Received connection on room ${room}`) 
+		if(room == null || room == "") room = Math.random().toString(36).slice(2, 9)
+		if(!(room in rooms)) rooms[room] = []
+		socket.join(room)
+		socket.emit("room_joined", room)
+		
+		socket.on('message', (text) => {
+			io.to(room).emit('message', text)//send to everyone BUT the original client
+		})
+		
+		let player = rooms[room].length
+		if(player == 0) {
+			rooms[room].push(socket)
+			socket.emit("message", "Waiting for another player ...")
+		} else if(player == 1) {
+			rooms[room].push(socket)
+			io.to(room).emit('message', 'Two players connected. Game starting')
+			startNewGame(room)
+			updateState(room)
 		}
-		console.log("valid turn:", valid_turn)
-		updateState()
+
+		socket.on('select_card', (packet) => {
+			console.log("Received a card selection")
+			let valid_turn = new_game[room].turn(player, JSON.parse(packet))
+			if(valid_turn) {
+				let yakus = new_game[room].checkForYakus(player)
+				if(Object.keys(yakus).length > 0) {
+					//we should probably put this in the actual game state
+					//no reason to alter state outside of koi.js
+					new_game[room].state.yakus[player] = yakus
+					new_game[room].state.last_koi = player
+					new_game[room].state.handle_koi = true
+				}
+			}
+			console.log("valid turn:", valid_turn)
+			updateState(room)
+		})
 	})
 })
 
@@ -63,36 +73,38 @@ server.listen(port, () => {
 	console.log("Server listening on port:", port)
 })
 
-let startNewGame = () => {
-	new_game = koi(players)
-	new_game.deal()
+let startNewGame = (room) => {
+	let game = koi(rooms[room])
+	game.deal()
+	new_game[room] = game
 }
 
-let updateState = () => {
-	for(let [i, player] of players.entries()) {
+let updateState = (room) => {
+	let game = new_game[room]
+	for(let [i, player] of rooms[room].entries()) {
 		//the opponent will always be the value that we aren't
 		//so if we are 1, then they are 0.
 		//if we are 0, they are 1
 		//the shorthand for this is i+1 mod 2:
 		//i = 0, 1 mod 2 = 1
 		//i = 1, 2 mod 2 = 0
-		let opponent = (i+1)%players.length
+		let opponent = (i+1)%rooms[room].length
 		let hidden_hand = []
-		hidden_hand.length = new_game.state.hands[opponent].length
+		hidden_hand.length = game.state.hands[opponent].length
 		hidden_hand.fill("Blank")
 		let clean_state = {
-			hand: new_game.state.hands[i],
-			player_discard: new_game.state.discards[i],
-			opponent_discard: new_game.state.discards[opponent],
-			table: new_game.state.table,
-			draw: new_game.state.draw,
+			hand: game.state.hands[i],
+			player_discard: game.state.discards[i],
+			opponent_discard: game.state.discards[opponent],
+			table: game.state.table,
+			draw: game.state.draw,
 			selected: null,//clear our selection. not sure if necessary
-			possible: new_game.state.possible,
+			possible: game.state.possible,
 			opp: hidden_hand,
-			turn: new_game.checkTurn(i),
-			last_koi: new_game.state.last_koi,
-			yakus: new_game.state.yakus,
-			handle_koi: new_game.state.handle_koi,
+			turn: game.checkTurn(i),
+			last_koi: game.state.last_koi,
+			yakus: game.state.yakus,
+			handle_koi: game.state.handle_koi,
 			player: i
 		}
 		player.emit("state", JSON.stringify(clean_state))

@@ -314,34 +314,17 @@ const writeEvent = (text) => {
 	messages.push(text)
 }
 
-const handleHighlights = () => {
-	//i want all of this to be part of the template eventually
-	if(state.draw) {
-		document.getElementById(state.draw).className += " selected"
-		for(let possible of state.possible) {
-			document.getElementById(possible).className += " possible"
-		}
-	}
-	else if(state.selected) {
-		state.possible = []
-		if(state.selected !== null) document.getElementById(state.selected).className += " selected"
-		for(let table_card of state.table) {
-			if(checkMatch(table_card, state.selected)) {
-				state.possible.push(table_card)
-				document.getElementById(table_card).className += " possible"
-			}
-		}
-		if(state.possible.length == 0) {
-			state.possible.push("Empty")
-			document.getElementById("Empty").className += " possible"
-		}
-	}
-	
-}
-
 writeEvent("Listening to Server")
 
 const socket = io()
+console.log(window.location.hash)
+socket.emit('join_room', window.location.hash.slice(1))//get rid of the #
+
+socket.on('room_joined', (room) => {
+	console.log("Joined the room: ", room)
+	history.pushState(null, null, `#${room}`)
+})
+
 socket.on('message', writeEvent)
 
 socket.on('state', (game_state) => {
