@@ -317,10 +317,12 @@ const writeEvent = (text) => {
 writeEvent("Listening to Server")
 
 const socket = io()
-socket.emit('join_room', 'ffff')
+console.log(window.location.hash)
+socket.emit('join_room', window.location.hash.slice(1))//get rid of the #
 
 socket.on('room_joined', (room) => {
 	console.log("Joined the room: ", room)
+	history.pushState(null, null, `#${room}`)
 })
 
 socket.on('message', writeEvent)

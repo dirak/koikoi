@@ -23,10 +23,10 @@ let new_game = {}
 
 
 io.on('connection', (socket) => {
-	console.log("Received connection") 
 	//now we just bind new room or join room
 	socket.on('join_room', (room) => {
-		if(room == null) room = Math.random().toString(36).slice(2)
+		console.log(`Received connection on room ${room}`) 
+		if(room == null || room == "") room = Math.random().toString(36).slice(2, 9)
 		if(!(room in rooms)) rooms[room] = []
 		socket.join(room)
 		socket.emit("room_joined", room)
