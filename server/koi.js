@@ -37,7 +37,7 @@ module.exports = (players) => {
 
 	for(player of players) {
 		game.state.discards.push([])
-		game.state.yakus.push([])
+		game.state.yakus.push({})
 	}
 
 	game.checkTurn = (player) => { return player == game.state.turn % 2 }

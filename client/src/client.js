@@ -38,6 +38,7 @@ let game = new Phaser.Game(config)
 function preload() {
 	this.load.multiatlas('cards', 'assets/spritesheet.json','assets')
 	this.load.image('background', 'assets/background.jpg')
+	this.highlights = this.add.group()
 }
 
 function create() {
@@ -50,9 +51,9 @@ function update() {
 		state.update = false
 		draw.call(this)
 		if(state.handle_koi) {
-			console.log(state.yakus)
-			let message = Object.keys(state.yakus).join(", ")
-			let points = Object.values(state.yakus).reduce((a, b) => a + b, 0)
+			let yakus = state.yakus[state.last_koi]
+			let message = Object.keys(yakus).join(", ")
+			let points = Object.values(yakus).reduce((a, b) => a + b, 0)
 			if(state.last_koi == state.player) {
 				message = "You got koi: " + message + " for a total of " + points
 			} else {
@@ -65,11 +66,17 @@ function update() {
 		if(state.draw) {
 			this.table
 				.getChildren()
-				.forEach((card) => { if(card.frame.name == state.draw) card.tint = 0xffffb2 })
+				.forEach((card) => {
+					if(card.frame.name == state.draw) {
+						highlightCard.call(this, card, 0xffffb2)
+				 }
+				})
 			this.table
 				.getChildren()
 				.filter((card) => state.possible.includes(card.frame.name))
-				.forEach((card) => card.tint = 0xFF9999)
+				.forEach((card) => {
+					highlightCard.call(this, card, 0xff9999)
+				})
 		}
 	}
 }
@@ -82,23 +89,36 @@ function KoiKoiPopUp(message) {
 		});
 }
 
+function highlightCard(card, color) {
+	let rectangle = this.add.graphics()
+	rectangle.lineStyle(4, color, 1)
+	rectangle.strokeRect(card.x - CARD_WIDTH/2,
+		card.y - CARD_HEIGHT/2,
+		CARD_WIDTH,
+		CARD_HEIGHT)
+	this.highlights.add(rectangle)
+}
+
 function bindCards() {
 	//bind player hand
 	Phaser.Actions.Call(this.hand.getChildren(), (card) => {
 		card.setInteractive()
 		card.on('pointerdown', () => {
+			console.log(this.highlights)
 			//clear old stuff
-			this.hand.getChildren().forEach((card) => card.tint = 0xffffff)
-			this.table.getChildren().forEach((card) => card.tint = 0xffffff)
+			this.highlights.clear(true)
 			//set new stuff
 			selectHand(card.frame.name)
 			if(state.selected != null) {
-				card.tint = 0xffffb2
+				highlightCard.call(this, card, 0xffffb2)
+				//card.tint = 0xffffb2
 				findPossibilities()
 				this.table
 					.getChildren()
 					.filter((card) => state.possible.includes(card.frame.name))
-					.forEach((card) => card.tint = 0xFF9999)
+					.forEach((card) => {
+						highlightCard.call(this, card, 0xff9999)
+					})
 			}
 		}, this)
 	}, this)
@@ -314,34 +334,17 @@ const writeEvent = (text) => {
 	messages.push(text)
 }
 
-const handleHighlights = () => {
-	//i want all of this to be part of the template eventually
-	if(state.draw) {
-		document.getElementById(state.draw).className += " selected"
-		for(let possible of state.possible) {
-			document.getElementById(possible).className += " possible"
-		}
-	}
-	else if(state.selected) {
-		state.possible = []
-		if(state.selected !== null) document.getElementById(state.selected).className += " selected"
-		for(let table_card of state.table) {
-			if(checkMatch(table_card, state.selected)) {
-				state.possible.push(table_card)
-				document.getElementById(table_card).className += " possible"
-			}
-		}
-		if(state.possible.length == 0) {
-			state.possible.push("Empty")
-			document.getElementById("Empty").className += " possible"
-		}
-	}
-	
-}
-
 writeEvent("Listening to Server")
 
 const socket = io()
+console.log(window.location.hash)
+socket.emit('join_room', window.location.hash.slice(1))//get rid of the #
+
+socket.on('room_joined', (room) => {
+	console.log("Joined the room: ", room)
+	history.pushState(null, null, `#${room}`)
+})
+
 socket.on('message', writeEvent)
 
 socket.on('state', (game_state) => {
