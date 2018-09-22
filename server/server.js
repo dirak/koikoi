@@ -16,7 +16,7 @@ const server = http.createServer(app)//create the server, this will help us hand
 
 const io = socketio(server)//communication with the client
 
-//in the future we want to split these up into rooms so we can have multiple games going
+
 let rooms = {}
 
 let new_game = {}

@@ -133,7 +133,8 @@ function bindCards() {
 }
 
 function draw() {
-	console.log(this)
+	this.hands = null
+	this.table = null
 	//draw background
 	this.add.image(0, 0, 'background').setOrigin(0)
 	//
