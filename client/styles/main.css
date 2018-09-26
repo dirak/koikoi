@@ -1,0 +1,32 @@
+canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#menu {
+	display: none;
+}
+
+button {
+	width: 200px;
+	height: 30px;	
+	font-size: 20px;
+	position: absolute;
+	z-index: 5;
+}
+
+input {
+	z-index: 5;
+	height: 25px;
+	position:absolute;
+}
+
+#join_game {
+	top: 100px;
+}
+
+#room_id {
+	top: 100px;
+	left: 210px;
+}

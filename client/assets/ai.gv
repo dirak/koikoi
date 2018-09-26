@@ -1,0 +1,13 @@
+digraph finite_state_machine {
+
+    node [shape = box label = "DRAW" ]; S
+		node [shape = box label = "CHECK POSSIBILITIES" ]; C
+		node [shape = box label = "FIND IF WE HAVE YAKU" ]; Y
+		node [shape = box label = "PICK HIGHEST VALUE CARD(S)" ]; P
+		node [shape = box label = "PICK FOR YAKU" ]; W
+		S -> C
+		C -> Y
+		Y -> W [label = "yaku can be achieved"]
+		Y -> P [label = "no yaku available"]
+		P -> S
+}

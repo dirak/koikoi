@@ -5,11 +5,18 @@
 		Koi
 	</head>
 	<body>
+
 		<div id="canvas">
-			
+			<div id="menu">
+				<button id="new_game" type="button">New Game</button>
+				<button id="join_game" type="button">Join Game</button><input type="text" id="room_id">
+			</div>
 		</div>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+	<script src="src/settings.js"></script>
+	<script src="src/menu_scene.js"></script>
+	<script src="src/game_scene.js"></script>
 	<script src="src/client.js"></script>
 	</body>
 
