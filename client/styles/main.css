@@ -30,3 +30,9 @@ input {
 	top: 100px;
 	left: 210px;
 }
+
+#koi_menu {
+	z-index:1000;
+	margin:auto;
+	text-align:center;
+}

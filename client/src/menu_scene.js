@@ -5,7 +5,7 @@ class MenuScene extends Phaser.Scene {
 
 	preload() {
 		this.load.multiatlas('cards', 'assets/spritesheet.json','assets')
-		this.load.image('background', 'assets/background.jpg')
+		this.load.image('background', 'assets/bg.png')
 	}
 
 	create() {

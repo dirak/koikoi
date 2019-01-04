@@ -5,7 +5,7 @@ class GameScene extends Phaser.Scene {
 
 	preload() {
 		this.load.multiatlas('cards', 'assets/spritesheet.json','assets')
-		this.load.image('background', 'assets/background.jpg')
+		this.load.image('background', 'assets/bg.png')
 		this.highlights = this.add.group()
 	}
 
@@ -30,6 +30,15 @@ class GameScene extends Phaser.Scene {
 			this.draw()
 			if(state.handle_koi) {
 				let yakus = state.yakus[state.last_koi]
+				document.getElementById('koi_menu').innerHTML = "";
+				let ul = document.createElement('ul')
+				Object.entries(yakus).forEach((v, k) => {
+					let li = document.createElement('li')
+					li.innerHTML = `${k} for ${v}`
+					ul.appendChild(li)
+				})
+				document.getElementById('koi_menu').appendChild(ul)
+
 				let message = Object.keys(yakus).join(", ")
 				let points = Object.values(yakus).reduce((a, b) => a + b, 0)
 				if(state.last_koi == state.player) {
@@ -37,7 +46,7 @@ class GameScene extends Phaser.Scene {
 				} else {
 					message = "They got koi: " + message + " for a total of " + points
 				}
-				this.KoiKoiPopUp(message)
+				//this.KoiKoiPopUp(message)
 			} else {
 				this.bindCards()
 			}
